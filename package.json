@@ -1,0 +1,19 @@
+{
+  "name": "integer-to-cardinal-english",
+  "version": "1.0.0",
+  "description": "English words from any integer",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/number-reference/integer-to-cardinal-english.git"
+  },
+  "author": "Liam Norris",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/number-reference/integer-to-cardinal-english/issues"
+  },
+  "homepage": "https://github.com/number-reference/integer-to-cardinal-english#readme"
+}
