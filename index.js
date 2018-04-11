@@ -1,3 +1,5 @@
+"use strict";
+
 const CARDINALS = [
   null,
   "One",
@@ -105,12 +107,12 @@ const cardinalize = function(n) {
     cardinals.push(CARDINALS[n]);
   } else {
     meta = digit_meta(n);
-    cardinal_teen = digit_cardinal(meta.digit, CARDINALS_1);
+    var cardinal_teen = digit_cardinal(meta.digit, CARDINALS_1);
 
     n -= meta.digit * meta.exponent;
 
     meta = digit_meta(n);
-    cardinal_unit = digit_cardinal(meta.digit, CARDINALS);
+    var cardinal_unit = digit_cardinal(meta.digit, CARDINALS);
 
     cardinals.push([cardinal_teen, cardinal_unit].filter(isnotempty).join("-"));
   }
@@ -124,7 +126,7 @@ const decimal_to_cardinal = function (n) {
   var cardinals = [];
 
 
-  for (nameable_power = 0; nameable_power <= nameable_powers * 3; nameable_power += 3) {
+  for (var nameable_power = 0; nameable_power <= nameable_powers * 3; nameable_power += 3) {
     var nameable_unit = n;
 
 
