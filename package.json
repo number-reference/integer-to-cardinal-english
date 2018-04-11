@@ -1,6 +1,6 @@
 {
   "name": "integer-to-cardinal-english",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "English words from any integer",
   "main": "index.js",
   "scripts": {
