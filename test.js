@@ -3,6 +3,7 @@
 const cardinal = require("./index");
 
 const assertions = [
+  [0, "Zero"],
   [1, "One"],
   [7, "Seven"],
   [11, "Eleven"],

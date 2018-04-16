@@ -121,6 +121,7 @@ const cardinalize = function(n) {
 }
 
 const decimal_to_cardinal = function (n) {
+  if (n === 0) return "Zero";
   var meta = digit_meta(n);
   var nameable_powers = Math.floor(meta.power / 3);
   var cardinals = [];
