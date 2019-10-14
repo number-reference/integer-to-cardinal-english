@@ -1,6 +1,8 @@
+/* @flow */
 "use strict";
 
-const cardinal = require("./index");
+const cardinal = require("./cardinal");
+const assert = require("assert");
 
 const assertions = [
   [0, "Zero"],
@@ -46,9 +48,13 @@ const assertions = [
   [127500, "One Hundred and Twenty-Seven Thousand, and Five Hundred"],
   [127521, "One Hundred and Twenty-Seven Thousand, Five Hundred and Twenty-One"],
   [130500, "One Hundred and Thirty Thousand, and Five Hundred"],
+  [1000000, "One Million"],
 ];
 
 assertions.forEach(function(assertion) {
   var actual = cardinal(assertion[0]);
-  console.assert(actual === assertion[1], "'" + actual + "'" + " is not " + "'" + assertion[1] + "'");
+  const expected = assertion[1];
+  assert.deepStrictEqual(actual, expected);
 }); 
+
+console.log("All tests pass!");
