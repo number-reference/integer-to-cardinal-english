@@ -4,7 +4,10 @@
   "description": "English words from any integer",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node lib/cardinal.js",
+    "build": "flow-remove-types src/ -d lib/",
+    "flow": "flow",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
