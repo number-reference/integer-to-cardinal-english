@@ -1,156 +1,158 @@
+/* @flow */
 "use strict";
 
-const CARDINALS = [
-  null,
-  "One",
-  "Two",
-  "Three",
-  "Four",
-  "Five",
-  "Six",
-  "Seven",
-  "Eight",
-  "Nine",
-  "Ten",
-  "Eleven",
-  "Twelve",
-  "Thirteen",
-  "Fourteen",
-  "Fifteen",
-  "Sixteen",
-  "Seventeen",
-  "Eighteen",
-  "Nineteen"
-]
+import type {numerical} from 'abstract-numerical-unit';
 
-const CARDINALS_1 = [
-  null,
-  null,
-  "Twenty",
-  "Thirty",
-  "Forty",
-  "Fifty",
-  "Sixty",
-  "Seventy",
-  "Eighty",
-  "Ninety"
-]
+const AbstractNumericalUnit = require('abstract-numerical-unit');
 
-const CARDINAL_EXPONENTS = [
-  null,
-  null,
-  "Hundred",
-  "Thousand",
-  null,
-  null,
-  "Million",
-  null,
-  null,
-  "Billion",
-  null,
-  null,
-  "Trillion",
-  null,
-  null
-]
+class EnglishUnit extends AbstractNumericalUnit {
 
-const isnotempty = function (possibly_empty) {
-  return possibly_empty !== null && possibly_empty !== "";
-}
-
-const digit_meta = function(n) {
-  var meta = {
-    power: 0,
-    exponent: 0,
-    digit: 0,
-  }
-  if (n === 0) { return meta; }
-
-  meta.power = Math.floor(n).toString().length - 1;
-  meta.exponent = Math.pow(10, meta.power);
-  meta.digit = Math.floor(n / meta.exponent);
-
-  return meta;
-}
-
-const digit_cardinal = function(digit, cardinal_array) {
-  return cardinal_array[digit];
-}
-
-const cardinalize = function(n) {
-  var greater_than_ninety_nine = n > 99;
-  var cardinals = [];
-  var meta = "";
-  var cardinal = "";
-
-  if (n === 0) {
-    return null;
+  constructor(power: numerical, value: numerical, next: ?EnglishUnit) {
+    super(power, value, next);
   }
 
-  if (greater_than_ninety_nine) {
-    meta = digit_meta(n);
-    cardinal = digit_cardinal(meta.digit, CARDINALS);
-    cardinals.push(cardinal);
-    cardinals.push("Hundred");
-    n -= meta.digit * meta.exponent;
+  static fromNumerical(numerical: numerical): EnglishUnit {
+    return EnglishUnit.fromAbstract(super.fromNumerical(numerical));
   }
 
-  if (n === 0) {
-    return cardinals.join(" ");
+  static fromAbstract(abstract_unit: AbstractNumericalUnit): EnglishUnit {
+    return new EnglishUnit(
+      abstract_unit.power,
+      abstract_unit.value,
+      abstract_unit.next == null ? null : EnglishUnit.fromAbstract(abstract_unit.next),
+    );
   }
 
-  if (greater_than_ninety_nine) {
-    cardinals.push("and");
-  }
-
-  if (n < CARDINALS.length) {
-    cardinals.push(CARDINALS[n]);
-  } else {
-    meta = digit_meta(n);
-    var cardinal_teen = digit_cardinal(meta.digit, CARDINALS_1);
-
-    n -= meta.digit * meta.exponent;
-
-    meta = digit_meta(n);
-    var cardinal_unit = digit_cardinal(meta.digit, CARDINALS);
-
-    cardinals.push([cardinal_teen, cardinal_unit].filter(isnotempty).join("-"));
-  }
-
-  return cardinals.join(" ");
-}
-
-const decimal_to_cardinal = function (n) {
-  if (n === 0) return "Zero";
-  var meta = digit_meta(n);
-  var nameable_powers = Math.floor(meta.power / 3);
-  var cardinals = [];
-
-
-  for (var nameable_power = 0; nameable_power <= nameable_powers * 3; nameable_power += 3) {
-    var nameable_unit = n;
-
-
-    // Remove high digits
-    while (meta.power >= nameable_power + 3) {
-      nameable_unit -= meta.digit * meta.exponent;
-      meta = digit_meta(nameable_unit);
+  isLastOfUnit(): boolean {
+    if (this.next == null) {
+      return true;
     }
 
-    // Remove low digits
-    if (nameable_unit > 999) {
-      nameable_unit = Math.floor(nameable_unit / Math.pow(10, nameable_power));
+    return Math.floor(this.power / 3) !== Math.floor(this.next.power / 3);
+  }
+
+  getUnit(): ?string {
+    if (!this.isLastOfUnit()) {
+      return null;
     }
-
-    cardinals.unshift([cardinalize(nameable_unit), CARDINAL_EXPONENTS[nameable_power]].filter(isnotempty).join(" "));
-
-    // Determine whether to prepend "and"
-    if (nameable_unit !== 0 && (nameable_unit % 100 === 0 || nameable_unit < 100) && nameable_power === 0 && nameable_powers > 0) {
-      cardinals[0] = "and " + cardinals[0];
+    switch (Math.floor(this.power / 3)) {
+      case 1:
+        return "Thousand";
+      case 2:
+        return "Million";
+      case 3:
+        return "Billion";
+      case 4:
+        return "Trillion";
+      case 5:
+        return "Quadrillion";
+      case 6:
+        return "Quintillion";
+      default:
+        return null;
     }
   }
 
-  return cardinals.filter(isnotempty).join(", ");
+  getLabel(): string {
+    if (this.power % 3 === 1) {
+      switch (this.value) {
+        case 0:
+          return "";
+        case 2:
+          return "Twenty";
+        case 3:
+          return "Thirty";
+        case 4:
+          return "Forty";
+        case 5:
+          return "Fifty";
+        case 6:
+          return "Sixty";
+        case 7:
+          return "Seventy";
+        case 8:
+          return "Eighty";
+        case 9:
+          return "Ninety";
+        case 1:
+          if (this.next == null || this.next.power + 1 !== this.power) {
+            return "Ten";
+          }
+          const next_value = this.next.value;
+          this.next = this.next.next;
+          switch (next_value) {
+            case 0:
+              return "Ten";
+            case 1:
+              return "Eleven";
+            case 2:
+              return "Twelve";
+            case 3:
+              return "Thirteen";
+            case 4:
+              return "Fourteen";
+            case 5:
+              return "Fifteen";
+            case 6:
+              return "Sixteen";
+            case 7:
+              return "Seventeen";
+            case 8:
+              return "Eightteen";
+            case 9:
+              return "Nineteen";
+            default:
+              return "";
+          }
+        default:
+          return "";
+      }
+    }
+
+    switch (this.value) {
+      case 1:
+        return "One";
+      case 2:
+        return "Two";
+      case 3:
+        return "Three";
+      case 4:
+        return "Four";
+      case 5:
+        return "Five";
+      case 6:
+        return "Six";
+      case 7:
+        return "Seven";
+      case 8:
+        return "Eight";
+      case 9:
+        return "Nine";
+      default:
+        return "Zero";
+    }
+  }
+
+  toString(): string {
+    let string = this.getLabel();
+    if (this.power % 3 === 2) {
+      string += " Hundred";
+    }
+    if (this.getUnit() !== null) {
+      string += ` ${String(this.getUnit())}`;
+    }
+    if (this.next != null) {
+      if (this.power % 3 === 2) {
+        string += " and";
+      }
+      string += ` ${this.next.toString()}`;
+    }
+    return string;
+  }
+}
+
+const decimal_to_cardinal = function (n: numerical): string {
+  return EnglishUnit.fromNumerical(n).toString();
 };
 
 module.exports = decimal_to_cardinal;
