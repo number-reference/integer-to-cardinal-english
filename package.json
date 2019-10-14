@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/number-reference/integer-to-cardinal-english/issues"
   },
-  "homepage": "https://github.com/number-reference/integer-to-cardinal-english#readme"
+  "homepage": "https://github.com/number-reference/integer-to-cardinal-english#readme",
+  "dependencies": {
+    "abstract-numerical-unit": "^1.0.0"
+  }
 }
