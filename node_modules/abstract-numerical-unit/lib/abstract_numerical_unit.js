@@ -2,7 +2,7 @@
 
 'use strict';
 
-                                 
+                                        
 
 module.exports = class AbstractNumericalUnit {
                 
@@ -15,6 +15,9 @@ module.exports = class AbstractNumericalUnit {
     this.next = next == null ? null : next;
   }
 
+  /*
+   * Returns true whenever *this digit* has a nonzero value
+   */
   isNonZero()          {
     return this.value !== 0;
   }
