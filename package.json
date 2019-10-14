@@ -2,9 +2,9 @@
   "name": "integer-to-cardinal-english",
   "version": "1.0.2",
   "description": "English words from any integer",
-  "main": "index.js",
+  "main": "lib/cardinal.js",
   "scripts": {
-    "test": "node lib/cardinal.js",
+    "test": "node lib/cardinal_test.js",
     "build": "flow-remove-types src/ -d lib/",
     "flow": "flow",
     "prepublish": "npm run build"
